@@ -1,54 +1,45 @@
 'use client';
-import {useEffect,useRef,useState} from 'react';
-import {ArrowDown,ArrowUpRight,Fingerprint,LockKeyhole,MoveRight} from 'lucide-react';
+import {useEffect,useRef,useState,type CSSProperties} from 'react';
+import {ArrowLeft,ArrowRight,ArrowUpRight,Fingerprint,KeyRound,Landmark,Route} from 'lucide-react';
+import '@fontsource/quantico/700-italic.css';
+import '@fontsource/story-script/400.css';
+import '@fontsource/inter/400.css';
 import styles from './Briefing.module.css';
 
-const chapters=[
- {label:'The approach',code:'RECRUITMENT',heading:<>No names.<br/>No pasts.</>,paragraphs:['It’s been five months since he found you. Just a knock on the door, and a man who called himself The Professor.','He trained you. No phones. No families. No room for error.'],quote:'The plan is only as good as the crew executing it.',note:'45 CREWS · THREE MINDS IN EACH',evidence:'THE PROFESSOR',caption:'The architect of the operation.'},
- {label:'The target',code:'THE ROYAL MINT',heading:<>Control the Mint.<br/>Change the rules.</>,paragraphs:['The Royal Mint holds the one machine that prints currency that has never officially existed. Control it, and you decide what money even means.','Forty-five crews go in. Only the top ten earn their way into The Escape.'],quote:'Today, the training ends. Today, you go in.',note:'PHASE 01 · INSIDE THE MINT',evidence:'THE FLOOR PLAN',caption:'Every entrance. Every blind spot.'},
- {label:'The way out',code:'EXTRACTION',heading:<>Getting in was<br/>the easy part.</>,paragraphs:['Get in. Take control of the mint. Print what you came for. Get out before the walls close in.','In The Escape, every decision matters. The first crew to collect every hint wins.'],quote:'You are not hackathon teams. You are the crew.',note:'PHASE 02 · THE ESCAPE',evidence:'THE EXIT ROUTE',caption:'A perfect plan always has a way out.'},
+const stops=[
+ {name:'THE PROFESSOR',tag:'THE FIRST KNOCK',short:'A stranger. An invitation.',title:['NO NAMES. NO PASTS.','JUST THE BEGINNING.'],text:'It’s been five months since he found you. No names. No pasts. Just a knock on the door, and a man who called himself The Professor.',extra:'He had a plan. But a plan needs people. This is where your story with the crew begins.',note:'The plan is only as good as the crew executing it.',details:['The Professor','The invitation','Your crew'],color:'#f04a3e',icon:Fingerprint},
+ {name:'THE TRAINING',tag:'FIVE MONTHS IN THE MAKING',short:'The farmhouse. The preparation.',title:['NO ROOM FOR ERROR.','NO SECOND CHANCES.'],text:'He trained you. No phones. No families. No room for error. Five months in the farmhouse, learning to think as one crew.',extra:'Today, the training ends. Today, you go in. What happens next depends on the people beside you.',note:'You are not hackathon teams. You are the crew.',details:['Five months','One plan','Three per crew'],color:'#f04a3e',icon:KeyRound},
+ {name:'THE MINT',tag:'THE OPERATION BEGINS',short:'Forty-five crews. One target.',title:['GET IN. TAKE CONTROL.','PRINT YOUR FUTURE.'],text:'The Royal Mint holds the one machine that prints currency that has never officially existed. Control it, and you decide what money even means.',extra:'Forty-five crews enter. Complete the challenges inside the Mint. Only the top ten crews earn their way into The Escape.',note:'Task details stay classified until event day.',details:['45 crews','Phase 01','Top 10 advance'],color:'#f04a3e',icon:Landmark},
+ {name:'THE ESCAPE',tag:'THE FINAL CHAPTER',short:'Every decision matters.',title:['GETTING IN WAS EASY.','NOW FIND YOUR WAY OUT.'],text:'You’re out of the Mint, but not out of trouble. Every decision matters. You either escape, or you get caught.',extra:'Follow the trail. Collect every hint. The first crew to complete the escape wins. Get out before the walls close in.',note:'The job was never just about getting in.',details:['10 crews','Phase 02','One winning crew'],color:'#f04a3e',icon:Route},
 ];
+const route='M85 76 H470 Q590 76 590 167 Q590 210 470 210 H195 Q85 210 85 305 Q85 370 205 370 H495 Q590 370 590 452 H650';
 export default function Briefing(){
- const root=useRef<HTMLElement>(null),stage=useRef<HTMLDivElement>(null),tabs=useRef<HTMLDivElement>(null);
  const [active,setActive]=useState(0);
- useEffect(()=>{
-  const section=root.current!,surface=stage.current!,reduced=matchMedia('(prefers-reduced-motion: reduce)'),compact=matchMedia('(max-width: 900px)');
-  let frame=0,pointerFrame=0,lastChapter=0;
-  const update=()=>{frame=0;const r=section.getBoundingClientRect();const p=reduced.matches||compact.matches?0:Math.max(0,Math.min(1,-r.top/Math.max(1,section.offsetHeight-surface.offsetHeight)));surface.style.setProperty('--progress',p.toFixed(4));const next=Math.min(2,Math.floor(p*3));if(next!==lastChapter){lastChapter=next;if(!tabs.current?.contains(document.activeElement))setActive(next);}};
-  const scroll=()=>{if(!frame)frame=requestAnimationFrame(update);};
-  const pointer=(e:PointerEvent)=>{if(reduced.matches||e.pointerType!=='mouse')return;cancelAnimationFrame(pointerFrame);pointerFrame=requestAnimationFrame(()=>{const r=surface.getBoundingClientRect();surface.style.setProperty('--px',((e.clientX-r.left)/r.width-.5).toFixed(3));surface.style.setProperty('--py',((e.clientY-r.top)/r.height-.5).toFixed(3));});};
-  const leave=()=>{cancelAnimationFrame(pointerFrame);surface.style.setProperty('--px','0');surface.style.setProperty('--py','0');};
-  const resize=new ResizeObserver(scroll);resize.observe(section);surface.addEventListener('pointermove',pointer);surface.addEventListener('pointerleave',leave);window.addEventListener('scroll',scroll,{passive:true});reduced.addEventListener('change',scroll);compact.addEventListener('change',scroll);scroll();
-  return()=>{cancelAnimationFrame(frame);cancelAnimationFrame(pointerFrame);resize.disconnect();surface.removeEventListener('pointermove',pointer);surface.removeEventListener('pointerleave',leave);window.removeEventListener('scroll',scroll);reduced.removeEventListener('change',scroll);compact.removeEventListener('change',scroll);};
- },[]);
- function select(index:number,focus=false){setActive(index);if(focus)(tabs.current?.querySelectorAll('button')[index] as HTMLButtonElement)?.focus();}
- return <section id="briefing" ref={root} className={styles.briefing} aria-labelledby="briefing-title">
-  <div ref={stage} className={styles.stage} data-chapter={active}>
-   <div className={styles.environment} aria-hidden="true"><img src="/media/briefing-room-v2.webp" alt="" width="1659" height="948" loading="lazy"/></div><div className={styles.shade} aria-hidden="true"/>
-   <header className={styles.topline}><span><i/>01 / THE BRIEFING</span><span><LockKeyhole size={12}/> EYES ONLY · OPERATION CODEVERSE</span><span>CV—02 / INTELLIGENCE DIVISION</span></header>
-   <div className={styles.sceneTitle}><p>FARMHOUSE · FIVE MONTHS EARLIER</p><h2 id="briefing-title">Every great heist<br/>begins with <em>a plan.</em></h2><span className={styles.titleRule}/></div>
-   <div className={styles.evidence}><span className={styles.evidenceCross} aria-hidden="true">+</span><div key={active}><small>EXHIBIT 0{active+1}</small><strong>{chapters[active].evidence}</strong><p>{chapters[active].caption}</p></div></div>
-   <div className={styles.dossier}>
-    <div className={styles.folderTab}>THE PROFESSOR’S FILE <span>CV / 02</span></div>
-    <div className={styles.paper}>
-     <div className={styles.paperTop}><Fingerprint size={28} strokeWidth={1.2}/><span>CONFIDENTIAL TRANSCRIPT<br/><b>RECIPIENT: YOUR CREW</b></span><span className={styles.fileNumber}>0{active+1}<small>/ 03</small></span></div>
-     {chapters.map((chapter,i)=><article key={chapter.code} id={'briefing-panel-'+i} role="tabpanel" aria-labelledby={'briefing-tab-'+i} tabIndex={0} hidden={active!==i} className={styles.transcript}>
-      <div className={styles.subject}>SUBJECT / {chapter.code}</div><h3>{chapter.heading}</h3>
-      <div className={styles.body}>{chapter.paragraphs.map(p=><p key={p}>{p}</p>)}</div>
-      <blockquote>“{chapter.quote}”<cite>— THE PROFESSOR</cite></blockquote>
-      <div className={styles.paperFoot}><span>{chapter.note}</span><span className={styles.stamp}>CLASSIFIED</span></div>
-     </article>)}
-     <div className={styles.paperFold} aria-hidden="true"/>
+ const root=useRef<HTMLElement>(null),story=useRef<HTMLDivElement>(null),buttons=useRef<HTMLDivElement>(null);
+ useEffect(()=>{const node=root.current!;const observer=new IntersectionObserver(([entry])=>{if(entry.isIntersecting){node.dataset.visible='true';observer.disconnect();}},{threshold:.15});observer.observe(node);return()=>observer.disconnect();},[]);
+ function select(index:number,keyboard=false){setActive(index);if(keyboard)(buttons.current?.querySelectorAll('button')[index] as HTMLButtonElement)?.focus();else if(matchMedia('(max-width:900px)').matches){story.current?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth',block:'start'});}}
+ const selected=stops[active];
+ return <section ref={root} className={styles.briefing} id="briefing" aria-labelledby="briefing-title" style={{'--stop-color':selected.color} as CSSProperties}>
+  <svg className={styles.frame} viewBox="0 0 1920 800" preserveAspectRatio="none" aria-hidden="true"><g fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M115 0 22 95v157L7 267v298l84 84v151M150 0 48 104v143l-19 22v283l104 104v144M0 15h52L0 69M1804 0l93 96v150l16 21v298l-85 84v151M1770 0l103 104v143l19 22v283l-104 104v144"/><path d="M0 715a170 170 0 0 1 171 85M1920 626a180 180 0 0 0-180 174" strokeDasharray="5 8"/><circle cx="48" cy="247" r="5"/><circle cx="1873" cy="247" r="5"/></g><g fill="#782b22"><path d="M0 0h64L0 64zM1920 800h-64l64-64z"/></g></svg>
+  <div className={styles.container}>
+   <div className={styles.eyebrow}><span>01 / THE BRIEFING</span><span>THE PROFESSOR HAS A PLAN.</span></div>
+   <header className={styles.heading}><h2 id="briefing-title">NO NAMES. NO PASTS.<br/><span>JUST THE PLAN.</span></h2><p>From the first knock<br/>to the final escape.<span className={styles.sticker}>Every move matters.</span></p></header>
+   <div className={styles.explorer}>
+    <div className={styles.map}>
+     <p className={styles.hint}>PICK A STOP. FOLLOW THE STORY. <ArrowRight size={16}/></p>
+     <svg className={styles.line} viewBox="0 0 700 540" preserveAspectRatio="none" aria-hidden="true"><path className={styles.ghost} d={route}/><path className={styles.trace} d={route} pathLength="1"/></svg>
+     <div ref={buttons} className={styles.stops} role="group" aria-label="Explore briefing chapters" onKeyDown={e=>{const index=Array.from(buttons.current!.querySelectorAll('button')).indexOf(document.activeElement as HTMLButtonElement);let next=index;if(e.key==='ArrowRight'||e.key==='ArrowDown')next=(index+1)%4;else if(e.key==='ArrowLeft'||e.key==='ArrowUp')next=(index+3)%4;else if(e.key==='Home')next=0;else if(e.key==='End')next=3;else return;e.preventDefault();select(next,true);}}>
+      {stops.map(({name,short,color,icon:Icon},i)=><button key={name} type="button" className={`${styles.stop} ${styles['stop'+(i+1)]}`} style={{'--node-color':color} as CSSProperties} aria-pressed={active===i} aria-controls="briefing-story-panel" onClick={()=>select(i)}><span className={styles.pin}><Icon size={24} aria-hidden="true"/><small>0{i+1}</small></span><span className={styles.stopText}><strong>{name}</strong><span>{short}</span>{i===3&&<em>THE WAY OUT ↗</em>}</span></button>)}
+     </div>
+     <span className={styles.scribble} aria-hidden="true">Every move counts.<br/>Trust your crew.</span>
     </div>
-    <div className={styles.dossierHint}><span/><span>TASK DETAILS REMAIN SEALED UNTIL EVENT DAY.</span></div>
+    <div ref={story} className={styles.story} id="briefing-story-panel" role="region" aria-label="Selected briefing chapter">
+     <div className={styles.storyTop}><span>CHAPTER 0{active+1} / 04</span><span>{selected.tag}</span></div>
+     <div aria-live="polite" aria-atomic="true"><article key={active} className={styles.storyBody}><span className={styles.number} aria-hidden="true">0{active+1}</span><h3>{selected.title[0]}<br/><span>{selected.title[1]}</span></h3><p>{selected.text}</p><p>{selected.extra}</p><ul className={styles.details} aria-label="Chapter details">{selected.details.map(detail=><li key={detail}>{detail}</li>)}</ul><p className={styles.note}><span>THE PROFESSOR’S NOTE /</span>{selected.note}</p></article></div>
+     <div className={styles.controls}><span>EVERY CHAPTER BRINGS YOU CLOSER.</span><button type="button" aria-label="Previous briefing chapter" disabled={active===0} onClick={()=>setActive(v=>Math.max(0,v-1))}><ArrowLeft size={20}/></button><button type="button" aria-label="Next briefing chapter" disabled={active===3} onClick={()=>setActive(v=>Math.min(3,v+1))}><ArrowRight size={20}/></button></div>
+    </div>
    </div>
-   <footer className={styles.bottom}>
-    <div className={styles.readCue}><ArrowDown size={14}/><span>SCROLL TO UNFOLD<br/><b>OR SELECT A CHAPTER</b></span></div>
-    <div ref={tabs} role="tablist" aria-label="Briefing chapters" className={styles.tabs} onKeyDown={e=>{let index=active;if(e.key==='ArrowRight')index=(active+1)%3;else if(e.key==='ArrowLeft')index=(active+2)%3;else if(e.key==='Home')index=0;else if(e.key==='End')index=2;else return;e.preventDefault();select(index,true);}}>
-     {chapters.map((chapter,i)=><button key={chapter.code} id={'briefing-tab-'+i} role="tab" aria-selected={active===i} aria-controls={'briefing-panel-'+i} tabIndex={active===i?0:-1} onClick={()=>select(i)}><span>0{i+1}</span><strong>{chapter.label}</strong><MoveRight size={16}/></button>)}
-    </div>
-    <a href="#crew" className={styles.next}>ASSEMBLE YOUR CREW <ArrowUpRight size={19}/></a>
-   </footer>
+   <footer className={styles.footer}><p><span>YOUR OBJECTIVE</span>Get in. Take control. Print your future. <strong>Get out.</strong></p><a href="#crew">ASSEMBLE YOUR CREW <ArrowUpRight size={22}/></a></footer>
   </div>
  </section>;
 }
