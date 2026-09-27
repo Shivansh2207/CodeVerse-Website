@@ -1,0 +1,12 @@
+from pathlib import Path
+p=Path('scripts/verify.mjs');s=p.read_text();s=s.replace("states.push(await page.locator('.vault-canvas').getAttribute('data-sc-verify-state'));", "states.push(await page.locator('.vault-canvas').getAttribute('data-sc-verify-state'));assert.ok(Math.abs(await page.locator('.vault-stage').evaluate(e=>e.getBoundingClientRect().top))<2,'Vault must remain pinned and visible');")
+p.write_text(s)
+p=Path('src/components/Details.tsx');s=p.read_text();s=s.replace('aria-selected={active===i} aria-controls="file-panel" onClick={()=>setActive(i)}','aria-selected={active===i} tabIndex={active===i?0:-1} aria-controls="file-panel" onKeyDown={e=>{let next=active;if(e.key==="ArrowRight"||e.key==="ArrowDown")next=(active+1)%files.length;else if(e.key==="ArrowLeft"||e.key==="ArrowUp")next=(active+files.length-1)%files.length;else if(e.key==="Home")next=0;else if(e.key==="End")next=files.length-1;else return;e.preventDefault();setActive(next);document.getElementById(`file-tab-${next}`)?.focus();}} onClick={()=>setActive(i)}')
+s=s.replace('<div className="faq">','<noscript><div className="no-script-rules">{files.slice(1).map(f=><article key={f.name}><h3>{f.title}</h3><p>{f.text}</p></article>)}</div></noscript><div className="faq">')
+p.write_text(s)
+p=Path('src/app/layout.tsx');s=p.read_text().replace("title: 'CodeVerse", "metadataBase: new URL(event.siteUrl || 'http://localhost:3000'),\n title: 'CodeVerse",1);p.write_text(s)
+p=Path('src/components/Experience.tsx');s=p.read_text();s=s.replace("const [sound,setSound]=useState(false);", "const [sound,setSound]=useState(false); const [resumeSound,setResumeSound]=useState(false);")
+s=s.replace('useEffect(()=>{setNow(Date.now());','useEffect(()=>{try{setResumeSound(localStorage.getItem(\'cv-sound-preference\')===\'true\');}catch{}setNow(Date.now());')
+s=s.replace("<span>Sound {sound?'on':'off'}</span>","<span>{!sound&&resumeSound?'Resume sound':`Sound ${sound?'on':'off'}`}</span>")
+s=s.replace('setSound(!sound);try','setSound(!sound);setResumeSound(false);try')
+p.write_text(s)

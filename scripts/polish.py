@@ -1,0 +1,11 @@
+from pathlib import Path
+p=Path('src/components/Phases.tsx');s=p.read_text(encoding='utf-8');start=s.index('{Array.from({length:28}');end=s.index('<path d="M0 440',start);s=s[:start]+'<image href="/media/escape-city.webp" width="1400" height="600" preserveAspectRatio="xMidYMid slice" opacity=".78"/>'+s[end:];s=s.replace('fill="#e4e5dc" fontSize="15"','fill="#f4f4e5" stroke="#151b15" strokeWidth="5" paintOrder="stroke" fontSize="15"');p.write_text(s,encoding='utf-8')
+p=Path('src/components/Vault.tsx');s=p.read_text(encoding='utf-8');s=s.replace("const steel=new THREE.MeshStandardMaterial", """const textureCanvas=document.createElement('canvas');textureCanvas.width=512;textureCanvas.height=512;const tc=textureCanvas.getContext('2d')!;tc.fillStyle='#888888';tc.fillRect(0,0,512,512);let seed=23;const random=()=>{seed=(seed*16807)%2147483647;return seed/2147483647;};for(let i=0;i<16000;i++){const v=Math.floor(90+random()*80);tc.strokeStyle=`rgba(${v},${v},${v},.2)`;tc.beginPath();const y=random()*512;const x=random()*512;tc.moveTo(x,y);tc.lineTo(x+random()*100,y);tc.stroke();}const texture=new THREE.CanvasTexture(textureCanvas);texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(3,3);
+ const steel=new THREE.MeshStandardMaterial""")
+s=s.replace('color:0x596367,metalness:.83,roughness:.3','color:0x596367,metalness:.83,roughness:.43,roughnessMap:texture,bumpMap:texture,bumpScale:.035')
+s=s.replace('renderer.dispose();renderer.domElement.remove();','texture.dispose();renderer.dispose();renderer.domElement.remove();')
+s=s.replace('<div className="vault-reward">','<div className="vault-interior" aria-hidden="true"/><div className="vault-reward">')
+p.write_text(s,encoding='utf-8')
+p=Path('src/components/Story.tsx');s=p.read_text(encoding='utf-8').replace('<div className="breach-door door-left"/>','<div className="breach-photo" aria-hidden="true"/><div className="breach-door door-left"/>');p.write_text(s,encoding='utf-8')
+p=Path('src/components/Details.tsx');s=p.read_text(encoding='utf-8').replace('<div className="closing-copy">','<div className="closing-art" aria-hidden="true"/><div className="closing-copy">');p.write_text(s,encoding='utf-8')
+p=Path('next.config.ts');s=p.read_text().replace('poweredByHeader: false','devIndicators: false, poweredByHeader: false');p.write_text(s)
