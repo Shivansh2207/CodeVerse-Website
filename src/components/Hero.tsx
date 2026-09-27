@@ -1,136 +1,67 @@
 'use client';
-
-import {useEffect, useRef, useState} from 'react';
-import {ArrowDown, ArrowUpRight, Fingerprint, RotateCcw} from 'lucide-react';
+import {useEffect,useRef,useState} from 'react';
+import {ArrowDown,ArrowRight,ArrowUpRight,UsersRound,Trophy,Landmark} from 'lucide-react';
+import '@fontsource/anton/400.css';
 import styles from './Hero.module.css';
-
-export default function Hero() {
-  const root = useRef<HTMLElement>(null);
-  const stage = useRef<HTMLDivElement>(null);
-  const canvas = useRef<HTMLDivElement>(null);
-  const unlockedRef = useRef(false);
-  const [unlocked, setUnlocked] = useState(false);
-  const [interacted, setInteracted] = useState(false);
-
-  useEffect(() => {
-    const section = root.current!;
-    const surface = stage.current!;
-    const host = canvas.current!;
-    const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-    let disposed = false, visible = true, frame = 0, last = 0, elapsed = 0;
-    let x = 0, y = 0, targetX = 0, targetY = 0, breach = 0, scroll = 0;
-    let scene: Awaited<ReturnType<typeof import('./HeroScene')['createHeroScene']>> | undefined;
-    const measure = () => {
-      const bounds = section.getBoundingClientRect();
-      scroll = reduced.matches ? 0 : Math.max(0, Math.min(1, -bounds.top / Math.max(1, section.offsetHeight - surface.offsetHeight)));
-      scene?.resize();
-      wake();
-    };
-    const onScroll = () => {
-      const bounds = section.getBoundingClientRect();
-      scroll = reduced.matches ? 0 : Math.max(0, Math.min(1, -bounds.top / Math.max(1, section.offsetHeight - surface.offsetHeight)));
-      wake();
-    };
-    const pointer = (e: PointerEvent) => {
-      if (e.pointerType === 'touch' || reduced.matches) return;
-      const bounds = surface.getBoundingClientRect();
-      targetX = (e.clientX - bounds.left) / bounds.width * 2 - 1;
-      targetY = (e.clientY - bounds.top) / bounds.height * 2 - 1;
-      surface.style.setProperty('--cursor-x', `${e.clientX - bounds.left}px`);
-      surface.style.setProperty('--cursor-y', `${e.clientY - bounds.top}px`);
-      if ((e.target as Element).closest('a,button')) delete surface.dataset.pointer;
-      else surface.dataset.pointer = 'active';
-      wake();
-    };
-    const leave = () => {targetX = targetY = 0; delete surface.dataset.pointer; wake();};
-    function tick(now: number) {
-      frame = 0;
-      if (!visible || document.hidden || disposed) return;
-      const dt = Math.min((now - last) / 1000 || .016, .05); last = now;
-      if (!reduced.matches) elapsed += dt;
-      const ease = reduced.matches ? 1 : 1 - Math.exp(-dt * 5);
-      x += (targetX - x) * ease; y += (targetY - y) * ease;
-      breach += ((unlockedRef.current ? 1 : 0) - breach) * ease;
-      surface.style.setProperty('--hx', x.toFixed(4));
-      surface.style.setProperty('--hy', y.toFixed(4));
-      surface.style.setProperty('--hp', scroll.toFixed(4));
-      surface.style.setProperty('--breach', breach.toFixed(4));
-      scene?.render({x, y, progress: scroll, breach, time: elapsed, reduced: reduced.matches});
-      if (!reduced.matches) frame = requestAnimationFrame(tick);
-    }
-    function wake() { if (!frame && visible && !document.hidden && !disposed) frame = requestAnimationFrame(tick); }
-    const visibility = () => { if (document.hidden) {cancelAnimationFrame(frame); frame = 0;} else {last = performance.now(); wake();} };
-    const observer = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
-      if (!visible) {cancelAnimationFrame(frame); frame = 0;} else {last = performance.now(); wake();}
-    });
-    observer.observe(section);
-    const resize = new ResizeObserver(measure); resize.observe(surface);
-    surface.addEventListener('pointermove', pointer);
-    surface.addEventListener('pointerleave', leave);
-    surface.addEventListener('click', wake);
-    window.addEventListener('scroll', onScroll, {passive: true});
-    document.addEventListener('visibilitychange', visibility);
-    reduced.addEventListener('change', measure);
-    import('./HeroScene').then(({createHeroScene}) => {
-      if (disposed) return;
-      scene = createHeroScene(host);
-      if (scene) surface.dataset.webgl = 'ready';
-      measure();
-    }).catch(() => {/* The CSS security ring remains available without WebGL. */});
-    measure();
-    return () => {
-      disposed = true; cancelAnimationFrame(frame); scene?.dispose(); observer.disconnect(); resize.disconnect();
-      surface.removeEventListener('pointermove', pointer); surface.removeEventListener('pointerleave', leave);
-      surface.removeEventListener('click', wake); window.removeEventListener('scroll', onScroll);
-      document.removeEventListener('visibilitychange', visibility); reduced.removeEventListener('change', measure);
-    };
-  }, []);
-
-  function toggleBreach() {unlockedRef.current = !unlockedRef.current; setUnlocked(unlockedRef.current); setInteracted(true);}
-
-  return <section ref={root} id="home" className={styles.hero} aria-label="CodeVerse recruitment">
-    <div ref={stage} className={styles.stage} data-unlocked={unlocked} data-interacted={interacted}>
-      <div className={styles.ambient} aria-hidden="true"/>
-      <div className={styles.grid} aria-hidden="true"/>
-      <div className={styles.giantSerial} aria-hidden="true">CV—02</div>
-      <div className={styles.fallbackRing} aria-hidden="true"><i/><i/><i/></div>
-      <div ref={canvas} className={styles.scene} aria-hidden="true"/>
-
-      <div className={styles.topline}>
-        <span><i/> DJS CODEAI PRESENTS</span>
-        <span>AN OPERATION, NOT AN EVENT.</span>
-      </div>
-      <div className={styles.titleBlock}>
-        <div className={styles.brand}>CODEVERSE <span>2.0</span><i>VOL. 02 / MUMBAI</i></div>
-        <h1 aria-label="CodeVerse 2.0 — The Heist"><span className={styles.titleTop}>THE<span className={styles.titleStar} aria-hidden="true">✳</span></span><span className={styles.titleMain}>HEIST<span className={styles.titlePeriod}>.</span></span></h1>
-        <div className={styles.tagline}><span className={styles.taglineLine}/><p>Every system has a weakness.<br/><strong>You’re about to find it.</strong></p></div>
-        <div className={styles.actions}>
-          <a className={styles.join} href="#join"><span>Join the crew</span><span className={styles.joinArrow}><ArrowUpRight size={23}/></span></a>
-          <a className={styles.discover} href="#briefing">The plan <ArrowDown size={14}/></a>
-        </div>
-      </div>
-
-      <div className={styles.art} aria-hidden="true">
-        <div className={styles.maskFloat}><img src="/media/heist-mask-v2.webp" alt="" width="900" height="1350" fetchPriority="high" draggable="false"/></div>
-        <div className={styles.scanLine}/>
-      </div>
-      <div className={styles.evidence} aria-hidden="true"><span className={styles.evidenceCross}>+</span><span>EXHIBIT 002<br/><b>IDENTITY: UNKNOWN</b></span><i/></div>
-      <div className={styles.sideStats}><div><b>45</b><span>CREWS IN</span></div><div><b>01</b><span>WAY OUT</span></div></div>
-      <div className={styles.security}>
-        <button className={styles.seal} onClick={toggleBreach} aria-pressed={unlocked} aria-label={unlocked ? 'Rearm security' : 'Break the seal'}>
-          <span className={styles.sealIcon}>{unlocked ? <RotateCcw size={25}/> : <Fingerprint size={29}/>}</span>
-          <span><small>{unlocked ? 'PROTOCOL OVERRIDDEN' : 'SECURITY LEVEL / 03'}</small><strong>{unlocked ? 'REARM SECURITY' : 'BREAK THE SEAL'} <ArrowUpRight size={14}/></strong></span>
-        </button>
-        <span className={styles.securityStatus} role="status">{unlocked ? 'ACCESS GRANTED. WELCOME TO THE CREW.' : 'YOUR FIRST MOVE STARTS HERE.'}</span>
-      </div>
-      <div className={styles.reticle} aria-hidden="true"><i/><span>+</span><small>{unlocked ? 'UNLOCKED' : 'TRACKING'}</small></div>
-      <div className={styles.bottom}>
-        <div className={styles.date}><strong>09.10.26</strong><span>DJSCE / MUMBAI</span></div>
-        <div className={styles.bottomMessage}><span className={styles.liveDot}/><span>{unlocked ? 'THE SYSTEM IS YOURS.' : 'NO NAMES. NO PASTS. JUST THE PLAN.'}</span></div>
-        <a href="#briefing" className={styles.scrollCue}><span>SCROLL TO BREAK IN</span><span className={styles.scrollArrow}><ArrowDown size={16}/></span></a>
-      </div>
-      <div className={styles.progress} aria-hidden="true"/>
-    </div>
-  </section>;
+const chapters=[
+ {id:'briefing',name:'The brief',detail:'Understand the mission.'},
+ {id:'crew',name:'Assemble',detail:'Build your crew.'},
+ {id:'plan',name:'The Mint',detail:'Solve. Create. Innovate.'},
+ {id:'escape',name:'The Escape',detail:'Claim what’s yours.'},
+];
+export default function Hero(){
+ const root=useRef<HTMLElement>(null),stage=useRef<HTMLDivElement>(null),canvas=useRef<HTMLDivElement>(null);
+ const [chapter,setChapter]=useState(0);
+ useEffect(()=>{
+  const section=root.current!,surface=stage.current!,host=canvas.current!,reduced=matchMedia('(prefers-reduced-motion: reduce)');
+  let disposed=false,visible=true,frame=0,last=0,time=0,x=0,y=0,tx=0,ty=0,progress=0,focus=0;
+  let scene:Awaited<ReturnType<typeof import('./HeroScene')['createHeroScene']>>|undefined;
+  function tick(now:number){
+   frame=0;if(disposed||!visible||document.hidden)return;
+   const dt=Math.min((now-last)/1000||.016,.1);last=now;if(!reduced.matches)time+=dt;
+   const easing=reduced.matches?1:1-Math.exp(-dt*3.5);
+   x+=(tx-x)*easing;y+=(ty-y)*easing;focus=0;
+   surface.style.setProperty('--mx',x.toFixed(4));surface.style.setProperty('--my',y.toFixed(4));
+   surface.style.setProperty('--progress',progress.toFixed(4));surface.style.setProperty('--focus',focus.toFixed(4));
+   scene?.render({x,y,progress,focus,time:reduced.matches?5:time,reduced:reduced.matches});
+   if(!reduced.matches)frame=requestAnimationFrame(tick);
+  }
+  function wake(){if(!frame&&!disposed&&visible&&!document.hidden)frame=requestAnimationFrame(tick);}
+  function measure(){const r=section.getBoundingClientRect();progress=reduced.matches?0:Math.max(0,Math.min(1,-r.top/Math.max(1,section.offsetHeight-surface.offsetHeight)));wake();}
+  function resize(){scene?.resize();measure();}
+  function pointer(e:PointerEvent){if(e.pointerType==='touch'||reduced.matches)return;const r=surface.getBoundingClientRect();tx=(e.clientX-r.left)/r.width*2-1;ty=(e.clientY-r.top)/r.height*2-1;wake();}
+  function leave(){tx=ty=0;wake();}
+  function visibility(){if(document.hidden){cancelAnimationFrame(frame);frame=0;}else{last=performance.now();wake();}}
+  const intersection=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;if(!visible){cancelAnimationFrame(frame);frame=0;}else{last=performance.now();wake();}});intersection.observe(section);
+  const observer=new ResizeObserver(resize);observer.observe(surface);
+  surface.addEventListener('pointermove',pointer);surface.addEventListener('pointerleave',leave);surface.addEventListener('click',wake);
+  window.addEventListener('scroll',measure,{passive:true});document.addEventListener('visibilitychange',visibility);reduced.addEventListener('change',resize);
+  import('./HeroScene').then(async({createHeroScene})=>{if(disposed)return;const created=await createHeroScene(host);if(disposed){created?.dispose();return;}scene=created;if(scene)surface.dataset.webgl='ready';resize();}).catch(()=>{});
+  resize();
+  return()=>{disposed=true;cancelAnimationFrame(frame);scene?.dispose();intersection.disconnect();observer.disconnect();surface.removeEventListener('pointermove',pointer);surface.removeEventListener('pointerleave',leave);surface.removeEventListener('click',wake);window.removeEventListener('scroll',measure);document.removeEventListener('visibilitychange',visibility);reduced.removeEventListener('change',resize);};
+ },[]);
+ return <section id="home" ref={root} className={styles.hero} aria-label="CodeVerse recruitment"><div ref={stage} className={styles.stage} data-chapter={chapter}>
+  <div className={styles.photograph} aria-hidden="true"><img src="/media/hero-reference-v4.webp" alt="" width="1672" height="941" fetchPriority="high" draggable="false"/></div>
+  <div className={styles.canvas} ref={canvas} aria-hidden="true"/><div className={styles.scrim} aria-hidden="true"/>
+  <div className={styles.sceneLabel}><span/>MUMBAI, INDIA<i/>09 OCTOBER 2026</div>
+  <div className={styles.coordinates}><i/>19.0760° N &nbsp; 72.8777° E</div>
+  <div className={styles.content}>
+   <div className={styles.eyebrow}><span/>DJS CODEAI PRESENTS</div>
+   <h1><span className={styles.eventName}>CODEVERSE <span>2.0</span></span><span className={styles.brush}><img src="/media/the-heist-brush.webp" alt="The Heist" width="2137" height="433" draggable="false"/></span></h1>
+   <div className={styles.motto}>LEARN · CREATE · INNOVATE</div>
+   <p className={styles.copy}>A high-stakes, hands-on developer experience<br className={styles.desktopBreak}/> where strategy meets code. Assemble your crew,<br className={styles.desktopBreak}/> solve real challenges, and break into The Mint.</p>
+   <div className={styles.actions}><a href="#join" className={styles.join}>Assemble your crew <ArrowRight/></a><a href="#briefing" className={styles.discover}>Discover the operation <ArrowUpRight/></a></div>
+   <nav className={styles.chapters} aria-label="Mission chapters" onMouseLeave={()=>setChapter(0)}>{chapters.map((item,i)=><a key={item.id} href={'#'+item.id} data-active={chapter===i} onMouseEnter={()=>setChapter(i)} onFocus={()=>setChapter(i)} onBlur={()=>setChapter(0)}><i/><span className={styles.chapterNumber}>0{i+1}</span><span><strong>{item.name}</strong><small>{item.detail}</small></span></a>)}</nav>
+  </div>
+  <nav className={styles.checkpoints} aria-label="Operation checkpoints">{[{name:'Recruitment',id:'crew',number:1},{name:'The Mint',id:'plan',number:2},{name:'The Escape',id:'escape',number:3}].map(item=><a key={item.id} className={styles['checkpoint'+item.number]} href={'#'+item.id}><span>CHECKPOINT 0{item.number}</span><strong><i/>{item.name}</strong></a>)}</nav>
+  <div className={styles.bottom}>
+   <div className={styles.operation}><i/><span><small>OPERATION</small><b>CODEVERSE_2.0</b></span></div>
+   <div className={styles.fact}><UsersRound/><b>45</b><span>CREWS</span></div>
+   <div className={styles.fact}><Trophy/><b>₹25K</b><span>AT STAKE</span></div>
+   <div className={styles.fact}><Landmark/><b>01</b><span>MINT</span></div>
+   <nav className={styles.timeline} aria-label="Operation timeline"><span>OPERATION TIMELINE</span><div>{chapters.map((item,i)=><a key={item.id} href={'#'+item.id} aria-label={item.name} data-active={chapter===i}/>)}</div></nav>
+   <a href="#briefing" className={styles.scroll}>THE STORY STARTS BELOW <ArrowDown/></a>
+  </div>
+  <div className={styles.scrollProgress} aria-hidden="true"/>
+ </div></section>;
 }

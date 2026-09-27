@@ -5,14 +5,17 @@
 | codeai-original.png | Supplied CodeAI logo | Preserved original file; displayed with CSS crop, used in ID export |
 | hero.webp | Built-in Imagegen, hero revision 2 | First frame rejected for muddy subjects. Revision accepted for recognizable red crew, clear architecture and lighting. Now environmental background and breach scene |
 | operative.webp | Built-in Imagegen | Inspected in generation and actual desktop/mobile composition. Genuine alpha confirmed via channel statistics. Independent foreground and crew scanner |
-| heist-mask-v2.webp | Built-in Imagegen, refined cutout | First result refined for cleaner separation and open eye holes. Final porcelain mask inspected in desktop and mobile hero compositions; 900 × 1350 WebP with alpha, about 191 KB. Layered over an original interactive Three.js security ring. |
+| heist-mask-v2.webp | Built-in Imagegen, refined cutout | First result refined for cleaner separation and open eye holes. Rejected hero direction; retained as an unused iteration. Replaced by the cinematic vault scene. |
 | briefing.webp | Built-in Imagegen | Inspected for coherent practical lighting, tactile paper and credible props |
 | escape-city.webp | Built-in Imagegen | Inspected for photographic roof detail, no baked labels and route contrast. Fictional schematic, not a real event route or Mumbai photograph |
 | loot.webp | Built-in Imagegen | Inspected for material realism, central negative space and coherent light. Revealed behind real-time vault door |
 | social.jpg | Local composite of hero artwork and SVG type | Locally generated Open Graph artwork |
 | icon.svg | Original project mark | Code-native decorative favicon, not a replacement for supplied logo |
 | scrollcraft.js | nateherkai/scroll-craft | Unmodified; MIT license retained in public/vendor |
-| Fonts | Fontsource Barlow Condensed / IBM Plex Mono | Self-hosted via npm packages |
+| hero-reference-v4.webp | Built-in Imagegen edit of supplied reference | Inspected against the requested scene; preserves vault, crew, CCTV, banner and map. UI removed from image and rebuilt as accessible HTML. |
+| the-heist-brush.webp | Built-in Imagegen edit of supplied reference | Inspected red brush lettering with confirmed alpha; trimmed and compressed for the hero title. |
+| hero-cinematic-v3.webp | Built-in Imagegen | Rejected previous hero direction; unused iteration. |
+| Fonts | Fontsource Anton / Barlow Condensed / IBM Plex Mono | Self-hosted via npm packages |
 | 3D vault, route and city schematic | Original code | Three.js geometry/materials and SVG/CSS |
 | Audio | Original Web Audio synthesis | Three quiet oscillator tones; explicit user activation only |
 
