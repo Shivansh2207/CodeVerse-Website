@@ -1,5 +1,6 @@
 import {Experience} from '@/components/Experience';
-import {Hero,Briefing,Breach} from '@/components/Story';
+import {Briefing,Breach} from '@/components/Story';
+import Hero from '@/components/Hero';
 import CrewSelector from '@/components/CrewSelector';
 import {PhaseOne,Escape} from '@/components/Phases';
 import {Elimination} from '@/components/Elimination';
