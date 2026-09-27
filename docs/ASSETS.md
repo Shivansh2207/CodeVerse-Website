@@ -27,3 +27,5 @@ References informed composition and motion only: Scroll Craft, cinematic-scroll-
 The briefing route adapts the user-owned portfolio Journey component and typography. Its frame, grid, path and interactive stops are SVG, CSS and HTML; no photographic background is used.
 
 Briefing colors follow the CodeVerse hero: charcoal, warm ivory, red and subdued brass. The operation marquee is live HTML/CSS with a pause control and static reduced-motion layout.
+
+Merged from Bhavya’s `6d0f160` branch: the 86-frame vault sequence and crew, payoff, rulebook and closing artwork. The sequence replaces the previous procedural vault; the completed final frame also serves reduced-motion and pre-script rendering. Supplied duplicates remain preserved from the branch.
