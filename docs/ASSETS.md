@@ -6,6 +6,7 @@
 | hero.webp | Built-in Imagegen, hero revision 2 | First frame rejected for muddy subjects. Revision accepted for recognizable red crew, clear architecture and lighting. Now environmental background and breach scene |
 | operative.webp | Built-in Imagegen | Inspected in generation and actual desktop/mobile composition. Genuine alpha confirmed via channel statistics. Independent foreground and crew scanner |
 | heist-mask-v2.webp | Built-in Imagegen, refined cutout | First result refined for cleaner separation and open eye holes. Rejected hero direction; retained as an unused iteration. Replaced by the cinematic vault scene. |
+| briefing-room-v2.webp | Built-in Imagegen | Inspected for credible anatomy, practical desk lighting, tactile plans and right-side negative space. Approved in actual desktop/mobile dossier composition; optimized WebP 142 KB. |
 | briefing.webp | Built-in Imagegen | Inspected for coherent practical lighting, tactile paper and credible props |
 | escape-city.webp | Built-in Imagegen | Inspected for photographic roof detail, no baked labels and route contrast. Fictional schematic, not a real event route or Mumbai photograph |
 | loot.webp | Built-in Imagegen | Inspected for material realism, central negative space and coherent light. Revealed behind real-time vault door |
