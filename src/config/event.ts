@@ -32,4 +32,4 @@ export function getEventState(now: number, remaining: number | null = event.seat
  return { key:'open', label:'Join the crew', detail:'Recruitment active. Closes 6 October', target:Date.parse(event.registrationCloses) };
 }
 export function currentSlot(now: number) { return schedule.findIndex(([start,end]) => now >= Date.parse(`2026-10-09T${start}:00+05:30`) && now < Date.parse(`2026-10-09T${end}:00+05:30`)); }
-export const shareMessage = 'Join our crew for CodeVerse 2.0, a heist-themed event on 9 October at DJSCE Mumbai. Teams of 3. ₹25,000 in prizes.';
+export const shareMessage = 'Join our crew for CodeVerse 2.0, a heist-themed event on 9 October at DJSCE Mumbai. Teams of 2–3. ₹25,000 in prizes.';

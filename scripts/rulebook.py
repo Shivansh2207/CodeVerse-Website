@@ -22,7 +22,7 @@ def block(y,label,lines):
  return y-38
 base(1,'THE HEIST. THE RULES.')
 c.drawImage('public/media/hero.webp',44,400,width=507,height=285,mask='auto',preserveAspectRatio=False)
-text(44,362,'45 CREWS. THREE PER CREW. ONE MINT.',18,'Helvetica-Bold')
+text(44,362,'45 CREWS. 2-3 PER CREW. ONE MINT.',18,'Helvetica-Bold')
 y=block(323,'THE OPERATION',[
  '9 October 2026 | 08:00 to 18:00 IST',
  'Dwarkadas J. Sanghvi College of Engineering, Mumbai',
@@ -37,8 +37,8 @@ y=block(y,'BEFORE YOU REGISTER',[
 ])
 text(44,85,'Fan-inspired event theme. Not affiliated with Netflix.',9,color=muted)
 c.showPage();base(2,'CREW PROTOCOL')
-y=block(660,'01 / THREE TO A CREW',[
- 'Exactly three participants per crew. No solo or duo entries.',
+y=block(660,'01 / TWO OR THREE TO A CREW',[
+ 'Minimum two, maximum three participants per crew. No solo entries.',
  'A maximum of 45 crews enter the operation.',
  'Open to everyone: any college, any branch, any experience level.'
 ])

@@ -3,7 +3,7 @@ import {useState} from 'react';
 import {ArrowDownToLine,ArrowUpRight,Plus,Minus} from 'lucide-react';
 import {event,schedule,currentSlot} from '@/config/event';
 import {useClock,Registration,ShareButton} from './Experience';
-const files=[{name:'Crew protocol',title:'THREE TO A CREW.',text:'Nobody goes in alone, and nobody brings a fourth. Exactly three members per crew. A maximum of 45 crews enter. Open to everyone: any college, any branch, any level.'},{name:'Your equipment',title:'BRING YOUR OWN TOOLS.',text:'Bring your laptop, laptop charger and college ID. Be through the door on time. Registration starts at 08:00 on 9 October.'},{name:'Code of conduct',title:'KEEP IT ORIGINAL.',text:'Original work only. No plagiarism. No one gets hurt. Respect fellow crews and the event team. The full operational briefing happens on event day.'},{name:'Qualification',title:'FORTY-FIVE BECOME TEN.',text:'The top 10 crews from Phase 1 advance to Phase 2. In Phase 2, the first crew to collect every hint wins. Task details remain classified until the briefing.'},{name:'The loot',title:'MAKE IT COUNT.',text:'INR 25,000 in total prizes. First: INR 12,000. Second: INR 8,000. Third: INR 5,000. Trophies for the top three, and an e-certificate for every participant.'}];
+const files=[{name:'Crew protocol',title:'TWO OR THREE. ONE CREW.',text:'Nobody goes in alone, and nobody brings a fourth. A minimum of two and a maximum of three members per crew. A maximum of 45 crews enter. Open to everyone: any college, any branch, any level.'},{name:'Your equipment',title:'BRING YOUR OWN TOOLS.',text:'Bring your laptop, laptop charger and college ID. Be through the door on time. Registration starts at 08:00 on 9 October.'},{name:'Code of conduct',title:'KEEP IT ORIGINAL.',text:'Original work only. No plagiarism. No one gets hurt. Respect fellow crews and the event team. The full operational briefing happens on event day.'},{name:'Qualification',title:'FORTY-FIVE BECOME TEN.',text:'The top 10 crews from Phase 1 advance to Phase 2. In Phase 2, the first crew to collect every hint wins. Task details remain classified until the briefing.'},{name:'The loot',title:'MAKE IT COUNT.',text:'INR 25,000 in total prizes. First: INR 12,000. Second: INR 8,000. Third: INR 5,000. Trophies for the top three, and an e-certificate for every participant.'}];
 export function Rules() {
   const [active, setActive] = useState(0);
 
@@ -95,7 +95,7 @@ export function Rules() {
         </div>
         <div className="faq-list">
           {[
-            ['How do I register?', 'Registration runs on Unstop from 29 September to 6 October. Form a team of three. The event team will provide the final registration link.'],
+            ['How do I register?', 'Registration runs on Unstop from 29 September to 6 October. Form a team of two or three. The event team will provide the final registration link.'],
             ['Is there a registration fee?', `Yes. ₹${event.fee} registration fee. ${event.feeBasis ? `The fee is per ${event.feeBasis}.` : 'Whether this is per person or per crew is still to be confirmed. Contact the organizers before paying.'}`],
             ['Can beginners join?', 'Yes. Everyone is welcome, regardless of college, branch or experience.'],
             ['Where does the heist happen?', `${event.venue}, ${event.address}, on 9 October 2026.`]
@@ -131,13 +131,13 @@ export function Timeline() {
             Ten hours.<br />
             <em>Make history.</em>
           </h2>
-          <p>Crews of three. Be through the door on time.</p>
+          <p>Crews of two or three. Be through the door on time.</p>
           <div className="timeline-actions">
             <a className="timeline-action-button mono" href="/documents/codeverse.ics" download>
               <span>Add to calendar</span>
               <ArrowDownToLine size={15} />
             </a>
-            <a className="timeline-action-button mono" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=CodeVerse+2.0+The+Heist&dates=20261009T023000Z%2F20261009T123000Z&location=Dwarkadas+J.+Sanghvi+College+of+Engineering+Mumbai&details=Teams+of+3.+Registration+required.+DJS+CODEAI." target="_blank" rel="noreferrer">
+            <a className="timeline-action-button mono" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=CodeVerse+2.0+The+Heist&dates=20261009T023000Z%2F20261009T123000Z&location=Dwarkadas+J.+Sanghvi+College+of+Engineering+Mumbai&details=Teams+of+2-3.+Registration+required.+DJS+CODEAI." target="_blank" rel="noreferrer">
               <span>Google Calendar</span>
               <ArrowUpRight size={15} />
             </a>

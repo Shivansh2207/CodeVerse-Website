@@ -1,137 +1,26 @@
 'use client';
-
-import { useEffect, useRef, useState } from 'react';
-
-export default function Payoff() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [amounts, setAmounts] = useState({ p1: 0, p2: 0, p3: 0 });
-
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced) {
-      setAmounts({ p1: 12000, p2: 8000, p3: 5000 });
-      return;
-    }
-
-    let frame = 0;
-    let started = false;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !started) {
-          started = true;
-          observer.disconnect();
-
-          const duration = 1500; // ms
-          const startTime = performance.now();
-
-          const step = (now: number) => {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            // Smooth cubic ease out
-            const ease = 1 - Math.pow(1 - progress, 3);
-
-            setAmounts({
-              p1: Math.round(12000 * ease),
-              p2: Math.round(8000 * ease),
-              p3: Math.round(5000 * ease),
-            });
-
-            if (progress < 1) {
-              frame = requestAnimationFrame(step);
-            }
-          };
-
-          frame = requestAnimationFrame(step);
-        }
-      },
-      { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
-    );
-
-    observer.observe(el);
-    return () => { observer.disconnect(); cancelAnimationFrame(frame); };
-  }, []);
-
-  return (
-    <section id="loot" ref={sectionRef} className="loot section">
-      <div className="section-index">
-        <span>THE PAYOFF</span>
-        <span className="mono">INVENTORY / ₹25,000</span>
-      </div>
-
-      <div className="loot-hero">
-        <div className="loot-title">
-          <h2>
-            HIGH STAKES.<br />
-            <em>HIGHER REWARDS.</em>
-          </h2>
-        </div>
-        <div className="loot-briefing">
-          <p>
-            Not just bragging rights.<br />
-            Something worth getting out for.
-          </p>
-        </div>
-      </div>
-
-      <div className="prize-lineup">
-        {/* Card 1 - FIRST CREW OUT (AUTHORIZED Hero Panel) */}
-        <div className="prize prize-dominant">
-          <div className="prize-header">
-            <span className="mono">FIRST CREW OUT</span>
-            <span className="prize-badge badge-authorized">AUTHORIZED</span>
-          </div>
-          <div className="prize-body">
-            <span className="prize-ghost" aria-hidden="true">01</span>
-            <strong className="prize-amount dominant-amount">
-              ₹{amounts.p1.toLocaleString('en-IN')}
-            </strong>
-          </div>
-          <div className="prize-footer">
-            <span className="prize-trophy"><span className="trophy-plus">+</span> TROPHY</span>
-          </div>
-        </div>
-
-        {/* Card 2 - SECOND CREW OUT */}
-        <div className="prize prize-tier-2">
-          <div className="prize-header">
-            <span className="mono">SECOND CREW OUT</span>
-            <span className="prize-badge badge-cleared">CLEARED</span>
-          </div>
-          <div className="prize-body">
-            <span className="prize-ghost" aria-hidden="true">02</span>
-            <strong className="prize-amount tier-2-amount">
-              ₹{amounts.p2.toLocaleString('en-IN')}
-            </strong>
-          </div>
-          <div className="prize-footer">
-            <span className="prize-trophy"><span className="trophy-plus">+</span> TROPHY</span>
-          </div>
-        </div>
-
-        {/* Card 3 - THIRD CREW OUT */}
-        <div className="prize prize-tier-3">
-          <div className="prize-header">
-            <span className="mono">THIRD CREW OUT</span>
-            <span className="prize-badge badge-cleared">CLEARED</span>
-          </div>
-          <div className="prize-body">
-            <span className="prize-ghost" aria-hidden="true">03</span>
-            <strong className="prize-amount tier-3-amount">
-              ₹{amounts.p3.toLocaleString('en-IN')}
-            </strong>
-          </div>
-          <div className="prize-footer">
-            <span className="prize-trophy"><span className="trophy-plus">+</span> TROPHY</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="loot-bottom">
-        <p className="certificate">EVERY OPERATIVE LEAVES WITH AN E-CERTIFICATE.</p>
-      </div>
-    </section>
-  );
+import {useEffect,useRef,type CSSProperties} from 'react';
+import {ArrowUpRight,Fingerprint,LockKeyhole} from 'lucide-react';
+import styles from './Payoff.module.css';
+const prizes=[{rank:'01',place:'FIRST CREW OUT',amount:'12,000',status:'PRIORITY RELEASE'},{rank:'02',place:'SECOND CREW OUT',amount:'8,000',status:'ALLOCATION / 02'},{rank:'03',place:'THIRD CREW OUT',amount:'5,000',status:'ALLOCATION / 03'}];
+export default function Payoff(){
+ const root=useRef<HTMLElement>(null);
+ useEffect(()=>{const el=root.current!;const observer=new IntersectionObserver(([entry])=>{if(entry.isIntersecting){el.dataset.visible='true';observer.disconnect();}},{threshold:.15});observer.observe(el);return()=>observer.disconnect();},[]);
+ return <section ref={root} id="loot" className={styles.section} aria-labelledby="payoff-title"><div className={styles.container}>
+  <div className={styles.index}><span><i/>THE PAYOFF / EVIDENCE ROOM</span><span>CASE NO. CV—0910 / CONTENTS VERIFIED</span><LockKeyhole size={14}/></div>
+  <div className={styles.layout}>
+   <div className={styles.scene}>
+    <div className={styles.sceneHeader}><span>PROPERTY OF THE MINT</span><span>UNTIL NOW.</span></div>
+    <div className={styles.cash} aria-hidden="true">{[0,1,2,3,4,5].map(i=><div className={styles.bundle} key={i} style={{'--i':i} as CSSProperties}><div className={styles.note}><span className={styles.noteTop}>CODEVERSE RESERVE / THE HEIST</span><div className={styles.noteCenter}><strong>CV</strong><Fingerprint size={43}/><strong>CV</strong></div><span className={styles.noteBottom}>OPERATION 0910 · MUMBAI</span><div className={styles.band}><span>SEALED</span><b>DJS CODEAI</b><span>CV—02 / 2026</span></div></div></div>)}</div>
+    <div className={styles.evidence}><span className={styles.redSeal}>EVIDENCE<br/><b>RELEASED</b></span><div className={styles.tag}><span>EXHIBIT A / TOTAL PRIZE POOL</span><strong><small>₹</small>25,000</strong><div><span>COUNTED. SEALED. WAITING.</span><Fingerprint size={18}/></div></div></div>
+    <div className={styles.sceneFooter}><span className={styles.barcode}/><span>NO LOOSE ENDS.<br/>JUST YOUR SHARE.</span></div>
+   </div>
+   <div className={styles.content}>
+    <span className={styles.kicker}>YOU DIDN’T COME THIS FAR FOR NOTHING.</span><h2 id="payoff-title">Take your<br/><em>cut.</em></h2><p className={styles.intro}>The risk was shared.<br/>The reward is yours to take.</p>
+    <div className={styles.ledger}>{prizes.map(({rank,place,amount,status})=><article className={styles.allocation} key={rank}><span className={styles.rank}>{rank}</span><div className={styles.prizeDetails}><span>{place}</span><strong><small>₹</small>{amount}</strong><span className={styles.status}>{status}</span></div><span className={styles.trophy}>+ TROPHY<ArrowUpRight size={17}/></span></article>)}</div>
+    <div className={styles.certificate}><Fingerprint size={21}/><p>Every operative leaves a mark.<br/><strong>E-certificate for every participant.</strong></p></div>
+   </div>
+  </div>
+  <footer className={styles.footer}><span>THE PROFESSOR HAS ACCOUNTED FOR EVERYTHING.</span><a href="#crew">CLAIM YOUR PLACE IN THE CREW <ArrowUpRight size={18}/></a></footer>
+ </div></section>;
 }
