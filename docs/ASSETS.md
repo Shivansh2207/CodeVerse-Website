@@ -19,13 +19,16 @@
 | Fonts | Fontsource Anton / Barlow Condensed / IBM Plex Mono / Quantico / Story Script / Inter | Self-hosted via npm packages |
 | 3D vault, route and city schematic | Original code | Three.js geometry/materials and SVG/CSS |
 | Audio | Original Web Audio synthesis | Three quiet oscillator tones; explicit user activation only |
+| heist-intro.webm / heist-intro-mobile.webm | Local trailer edit of reviewed briefing, city, crew, hero artwork and vault frames 001–045 | Separate landscape and portrait edits. Surveillance triptych, planning table, vault breach and crew reveal. Portrait crop revised after inspection to keep the Professor in frame. Approximately 1.4 MB each; reproducible with scripts/render-intro.mjs. Muted by default with optional synthesized impacts. |
 
 Built-in image originals are retained in the Codex generated_images directory. Optimized site assets are copied into this repository. Source hero and briefing PNGs are also retained locally. No third-party website photos or videos were copied.
 
-References informed composition and motion only: Scroll Craft, cinematic-scroll-skill, devinilabs/pro-skill and Lusion's cinematic work. There are no generated MP4 files; genuine WebGL substitutes for the requested video peak because video generation was unavailable.
+References informed composition and motion only: Scroll Craft, cinematic-scroll-skill, devinilabs/pro-skill and Lusion's cinematic work. The opening uses a locally composited WebM; the interactive sections use SVG, CSS, WebGL and the supplied vault frame sequence.
 
 The briefing route adapts the user-owned portfolio Journey component and typography. Its frame, grid, path and interactive stops are SVG, CSS and HTML; no photographic background is used.
 
 Briefing colors follow the CodeVerse hero: charcoal, warm ivory, red and subdued brass. The operation marquee is live HTML/CSS with a pause control and static reduced-motion layout.
 
 Merged from Bhavya’s `6d0f160` branch: the 86-frame vault sequence and crew, payoff, rulebook and closing artwork. The sequence replaces the previous procedural vault; the completed final frame also serves reduced-motion and pre-script rendering. Supplied duplicates remain preserved from the branch.
+
+Payoff money drop: codeai-airship.webp is a new Imagegen cutout using the supplied CodeAI logo as reference. Reviewed hull materials, complete airship geometry, branding and desktop/mobile composition before integration; true alpha verified. Optimized WebP: 267 KB. Falling prop banknotes, searchlights and skyline are original canvas/CSS graphics. Animation pauses offscreen, supports a pause button and respects reduced motion.

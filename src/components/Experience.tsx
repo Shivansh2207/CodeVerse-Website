@@ -1,6 +1,7 @@
 'use client';
 import {createContext,useContext,useEffect,useRef,useState} from 'react';
 import Script from 'next/script';
+import OpeningSequence from './OpeningSequence';
 import {ArrowUpRight, X, Menu, Volume2, VolumeX, ArrowRight} from 'lucide-react';
 import {event,getEventState,shareMessage} from '@/config/event';
 const Clock=createContext<number | null>(null);
@@ -18,17 +19,17 @@ export function ShareButton(){const [message,setMessage]=useState('');return <><
 export function Experience({children}:{children:React.ReactNode}){
  const [now,setNow]=useState<number|null>(null); const [menu,setMenu]=useState(false); const [boot,setBoot]=useState(false); const [sound,setSound]=useState(false); const [resumeSound,setResumeSound]=useState(false);
  const audio=useRef<AudioContext|null>(null); const gain=useRef<GainNode|null>(null); const menuDialog=useRef<HTMLDialogElement>(null); const menuButton=useRef<HTMLButtonElement>(null);
- useEffect(()=>{try{setResumeSound(localStorage.getItem('cv-sound-preference')==='true');}catch{}setNow(Date.now());const interval=setInterval(()=>setNow(Date.now()),1000); let timer:ReturnType<typeof setTimeout>;try{if(!sessionStorage.getItem('cv-entered')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){setBoot(true);timer=setTimeout(()=>{setBoot(false);sessionStorage.setItem('cv-entered','1');},1800);}}catch{} return ()=>{clearInterval(interval);clearTimeout(timer);audio.current?.close();};},[]);
- useEffect(()=>{if(menu){menuDialog.current?.showModal();document.body.style.overflow='hidden';}else{menuDialog.current?.close();document.body.style.overflow='';}return()=>{document.body.style.overflow='';};},[menu]);
+ useEffect(()=>{try{setResumeSound(localStorage.getItem('cv-sound-preference')==='true');}catch{}setNow(Date.now());const interval=setInterval(()=>setNow(Date.now()),1000);const introEnabled=new URLSearchParams(location.search).get('intro')!=='0';if(introEnabled&&!matchMedia('(prefers-reduced-motion: reduce)').matches)setBoot(true);return()=>{clearInterval(interval);audio.current?.close();};},[]);
+ useEffect(()=>{if(menu){menuDialog.current?.showModal();}else{menuDialog.current?.close();}document.body.style.overflow=menu||boot?'hidden':'';return()=>{document.body.style.overflow='';};},[menu,boot]);
  useEffect(()=>{const visibility=()=>{if(document.hidden) audio.current?.suspend();else if(sound)audio.current?.resume();};document.addEventListener('visibilitychange',visibility);return()=>document.removeEventListener('visibilitychange',visibility);},[sound]);
  async function toggleSound(){if(!audio.current){const a=new AudioContext();audio.current=a;const g=a.createGain();gain.current=g;g.gain.value=0;g.connect(a.destination);[48,72.1,96.2].forEach((f,i)=>{const o=a.createOscillator();o.type=i?'sine':'triangle';o.frequency.value=f;o.connect(g);o.start();});}await audio.current.resume();gain.current!.gain.setTargetAtTime(sound?0:0.025,audio.current.currentTime,.3);setSound(!sound);setResumeSound(false);try{localStorage.setItem('cv-sound-preference',String(!sound));}catch{}}
  const status=now===null?null:getEventState(now);
- function dismissBoot(){setBoot(false);try{sessionStorage.setItem('cv-entered','1');}catch{}}
+ function dismissBoot(){setBoot(false);requestAnimationFrame(()=>{const heading=document.querySelector<HTMLElement>('#home h1');if(heading){heading.setAttribute('tabindex','-1');heading.focus({preventScroll:true});}});}
  return <Clock.Provider value={now}>
  <a className="skip-link" href="#briefing">Skip to event details</a>
  <header className="site-header"><a href="#home" className="logo" aria-label="DJS CodeAI home"><img src="/media/codeai-original.png" alt="DJS CodeAI" width="180" height="52"/></a><div className="header-status"><i/>{status?.detail || '09 OCTOBER 2026 · DJSCE MUMBAI'}</div><div className="header-actions"><button className="sound-button" onClick={toggleSound} aria-label={sound?'Turn sound off':'Turn sound on'} aria-pressed={sound}>{sound?<Volume2 size={16}/>:<VolumeX size={16}/>}<span>{!sound&&resumeSound?'Resume sound':`Sound ${sound?'on':'off'}`}</span></button><button ref={menuButton} className="menu-button" onClick={()=>setMenu(true)} aria-expanded={menu} aria-controls="operation-menu">Operation menu <Menu size={19}/></button></div></header>
  <dialog id="operation-menu" ref={menuDialog} className="operation-menu" onCancel={()=>setMenu(false)}><div className="menu-top"><span>OPERATION INDEX / CV2—0910</span><button aria-label="Close menu" className="icon-button" onClick={()=>{setMenu(false);menuButton.current?.focus();}}><X/></button></div><nav>{[['briefing','The briefing'],['crew','Assemble the crew'],['plan','Inside the mint'],['escape','The escape'],['loot','The loot'],['identity','Your crew ID'],['rules','The rulebook'],['schedule','The timeline'],['venue','The location']].map(([id,label],i)=><a key={id} href={`#${id}`} onClick={()=>{setMenu(false);setTimeout(()=>document.getElementById(id)?.scrollIntoView(),0);}}><span>0{i+1}</span>{label}<ArrowUpRight/></a>)}</nav><p>45 CREWS. ONE MINT. NO SECOND CHANCES.</p></dialog>
- {boot&&<div className="boot" role="status"><span>CODEAI / SECURE NETWORK</span><p>NODE: DJSCE_MUMBAI<br/>CONNECTING TO PROFESSOR…<br/><b>ACCESS GRANTED.</b></p><strong>You’ve been chosen.</strong><button className="text-button" onClick={dismissBoot}>Skip intro <ArrowRight size={16}/></button></div>}
+ {boot&&<OpeningSequence onComplete={dismissBoot} sound={sound} onToggleSound={toggleSound}/>}
  {children}
  <div className="mobile-join"><span>09.10.26 / MUMBAI</span><JoinButton/></div>
  <Script src="/vendor/scrollcraft.js" strategy="afterInteractive" onReady={()=>{const w=window as Window & {ScrollCraft?:{mount:(root:HTMLElement)=>void;instances:unknown[]}};if(w.ScrollCraft&&!w.ScrollCraft.instances.length)w.ScrollCraft.mount(document.getElementById('operation')!);}}/>
